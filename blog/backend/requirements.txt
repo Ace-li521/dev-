@@ -1,0 +1,6 @@
+django>=4.0
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+oss2
+gunicorn
