@@ -26,3 +26,19 @@ class Comment(models.Model):
     class Meta:
         db_table = 'comments'
         ordering = ['-created_at']
+
+
+class Like(models.Model):
+    """点赞模型"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'likes'
+        # 确保用户对同一文章/评论只能点赞一次
+        unique_together = [
+            ('user', 'post'),
+            ('user', 'comment'),
+        ]
