@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .models import Post, Comment
-from .serializers import PostSerializer, PostListSerializer, CommentSerializer
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, PostListSerializer, CommentSerializer, LikeSerializer
 
 
 class PostListView(APIView):
@@ -106,3 +106,36 @@ class UploadImageView(APIView):
             return Response({'url': url})
         except Exception as e:
             return Response({'error': f'上传失败: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PostLikeView(APIView):
+    """文章点赞/取消点赞"""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+            like, created = Like.objects.get_or_create(user=request.user, post=post)
+            if not created:
+                # 已点赞，取消点赞
+                like.delete()
+                return Response({'liked': False, 'like_count': post.likes.count()})
+            return Response({'liked': True, 'like_count': post.likes.count()}, status=status.HTTP_201_CREATED)
+        except Post.DoesNotExist:
+            return Response({'error': '文章不存在'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CommentLikeView(APIView):
+    """评论点赞/取消点赞"""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            comment = Comment.objects.get(pk=pk)
+            like, created = Like.objects.get_or_create(user=request.user, comment=comment)
+            if not created:
+                like.delete()
+                return Response({'liked': False, 'like_count': comment.likes.count()})
+            return Response({'liked': True, 'like_count': comment.likes.count()}, status=status.HTTP_201_CREATED)
+        except Comment.DoesNotExist:
+            return Response({'error': '评论不存在'}, status=status.HTTP_404_NOT_FOUND)

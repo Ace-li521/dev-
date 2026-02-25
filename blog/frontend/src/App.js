@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
+import Snowfall from './Snowfall';
 import * as api from './api';
 
 // 登录/注册页
@@ -172,6 +173,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Snowfall />
       <div className="header">
         <h1><Link to="/" style={{color: '#333', textDecoration: 'none'}}>📝 博客系统</Link></h1>
         <nav>
