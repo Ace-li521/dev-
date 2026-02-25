@@ -6,6 +6,7 @@ urlpatterns = [
     path('<int:pk>/', views.PostDetailView.as_view()),
     path('<int:pk>/comments/', views.CommentView.as_view()),
     path('<int:pk>/like/', views.PostLikeView.as_view()),
+    path('<int:pk>/share/', views.SharePostView.as_view()),
     path('comments/<int:pk>/like/', views.CommentLikeView.as_view()),
     path('upload/', views.UploadImageView.as_view()),
 ]

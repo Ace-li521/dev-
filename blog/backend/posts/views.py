@@ -139,3 +139,38 @@ class CommentLikeView(APIView):
             return Response({'liked': True, 'like_count': comment.likes.count()}, status=status.HTTP_201_CREATED)
         except Comment.DoesNotExist:
             return Response({'error': '评论不存在'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class SharePostView(APIView):
+    """分享文章"""
+    permission_classes = []
+
+    def get(self, request, pk):
+        """获取分享信息"""
+        try:
+            post = Post.objects.get(pk=pk)
+            base_url = request.build_absolute_uri('/').rstrip('/')
+            share_url = f"{base_url}/posts/{pk}/"
+            
+            share_links = {
+                'url': share_url,
+                'title': post.title,
+                'cover': post.cover,
+                'share_count': post.share_count,
+                'weibo': f"https://service.weibo.com/share/share.php?url={share_url}&title={post.title}",
+                'qq': f"https://connect.qq.com/widget/shareqq/index.html?url={share_url}&title={post.title}",
+                'copy_link': share_url,
+            }
+            return Response(share_links)
+        except Post.DoesNotExist:
+            return Response({'error': '文章不存在'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, pk):
+        """记录分享次数"""
+        try:
+            post = Post.objects.get(pk=pk)
+            post.share_count += 1
+            post.save(update_fields=['share_count'])
+            return Response({'share_count': post.share_count})
+        except Post.DoesNotExist:
+            return Response({'error': '文章不存在'}, status=status.HTTP_404_NOT_FOUND)

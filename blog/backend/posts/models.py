@@ -8,6 +8,7 @@ class Post(models.Model):
     content = models.TextField(verbose_name='内容')
     cover = models.URLField(blank=True, null=True, verbose_name='封面图')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    share_count = models.IntegerField(default=0, verbose_name='分享次数')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
