@@ -30,7 +30,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'cover', 'author', 'created_at', 'comments', 'comment_count', 'like_count', 'is_liked']
+        fields = ['id', 'title', 'content', 'cover', 'author', 'created_at', 'comments', 'comment_count', 'like_count', 'is_liked', 'share_count']
 
     def get_comment_count(self, obj):
         return obj.comments.count()
@@ -53,7 +53,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'cover', 'author', 'created_at', 'comment_count', 'like_count']
+        fields = ['id', 'title', 'cover', 'author', 'created_at', 'comment_count', 'like_count', 'share_count']
 
     def get_comment_count(self, obj):
         return obj.comments.count()
